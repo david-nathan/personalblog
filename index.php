@@ -1,54 +1,67 @@
+<?php
+/**
+ * The main template file
+ *
+ * This is the most generic template file in a WordPress theme
+ * and one of the two required files for a theme (the other being style.css).
+ * It is used to display a page when nothing more specific matches a query.
+ * E.g., it puts together the home page when no home.php file exists.
+ *
+ * @link https://codex.wordpress.org/Template_Hierarchy
+ *
+ * @package WordPress
+ * @subpackage personalblog
+ * @since 1.0
+ * @version 1.0
+ */
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="">
-    <meta name="author" content="">
+get_header(); ?>
 
-    <title>David Nathan</title>
+<div class="wrap">
+	<?php if ( is_home() && ! is_front_page() ) : ?>
+		<header class="page-header">
+			<h1 class="page-title"><?php single_post_title(); ?></h1>
+		</header>
+	<?php else : ?>
+	<header class="page-header">
+		<h2 class="page-title"><?php _e( 'Posts', 'twentyseventeen' ); ?></h2>
+	</header>
+	<?php endif; ?>
 
-    <!-- Bootstrap core CSS -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+	<div id="primary" class="content-area">
+		<main id="main" class="site-main" role="main">
 
-    <!-- Custom styles for this template -->
-    <link href="blog.css" rel="stylesheet">
+			<?php
+			if ( have_posts() ) :
 
+				/* Start the Loop */
+				while ( have_posts() ) : the_post();
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  </head>
+					/*
+					 * Include the Post-Format-specific template for the content.
+					 * If you want to override this in a child theme, then include a file
+					 * called content-___.php (where ___ is the Post Format name) and that will be used instead.
+					 */
+					get_template_part( 'template-parts/post/content', get_post_format() );
 
-  <body>
-    <div class="title">
-        <div id="sidebar"><a href=""><img src="./portrait.jpg" id="me" width="225" itemprop="photo"></a></div>
+				endwhile;
 
-        <div id="bio">
-            <div style="position:absolute;top:28px;">
-                <h1><span itemprop="name">David Nathan</span></h1>
+				the_posts_pagination( array(
+					'prev_text' => twentyseventeen_get_svg( array( 'icon' => 'arrow-left' ) ) . '<span class="screen-reader-text">' . __( 'Previous page', 'twentyseventeen' ) . '</span>',
+					'next_text' => '<span class="screen-reader-text">' . __( 'Next page', 'twentyseventeen' ) . '</span>' . twentyseventeen_get_svg( array( 'icon' => 'arrow-right' ) ),
+					'before_page_number' => '<span class="meta-nav screen-reader-text">' . __( 'Page', 'twentyseventeen' ) . ' </span>',
+				) );
 
-                <p style="line-height:23px;">
-                Research Associate, Centre for Exploration Targeting, UWA<br> 
-                Email: <a href="mailto:david.nathan@uwa.edu.au">david.nathan@uwa.edu.au</a><br>
-                Office: Room 104, Robert Street Building</p>
-                <p class="external">
-                    <a href="https://github.com/nathad02">Github</a> • <a href="https://scholar.google.com/citations?user=3TXu_OsAAAAJ">Scholar</a> • <a href="https://www.socrates.uwa.edu.au/Staff/StaffProfile.aspx?Person=DavidNathan">Socrates</a></p>
-            </div>
-        </div>
+			else :
 
-    </div>
-      
+				get_template_part( 'template-parts/post/content', 'none' );
 
-      <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-  </body>
-</html>    
+			endif;
+			?>
+
+		</main><!-- #main -->
+	</div><!-- #primary -->
+	<?php get_sidebar(); ?>
+</div><!-- .wrap -->
+
+<?php get_footer();
